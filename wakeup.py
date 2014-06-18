@@ -13,6 +13,9 @@ texts_dir="texts/"
 wakeup_file="intro_"
 morningplan_file="plan_"
 file_extension=".txt"
+vlc_location="/Applications/VLC.app/Contents/MacOS/"
+yoga_tutorial_location = "/Users/pedro/Dropbox/5.visuals/3.videos/yoga/"
+yoga_tutorial_file = "a.mp4"
 
 
 def play_background():
@@ -54,14 +57,13 @@ time.sleep(sleep_start)
 subprocess.call(['say', "Alright, let us start by"])
 for sentence in morningplan_text:
     if (sentence[0] != '-'):
-    	subprocess.call(['say', str(sentence)])
-	#wait for keystroke
-   	while True:
-        	choice = raw_input("type will when you have done it.")
-        	if choice == 'will':
-        		break
-    else:
-	time.sleep(sleep_time)
+   	subprocess.call(['say', str(sentence)])
+    if (sentence[0] == 'y' and sentence[1] == 'o' and sentence[2] == 'g' and sentence[3] == 'a'): #seriously, this is what happens when you write code on train without internet
+	subprocess.call([vlc_location+"VLC", "--no-audio", "--video-on-top", "-f", " --play-and-exit", yoga_tutorial_location+yoga_tutorial_file])
+    while True:
+        choice = raw_input("type will when you have done it.")
+        if choice == 'will':
+        	break
 
 
 #load the morning plan, and read it out.
