@@ -19,6 +19,7 @@ music_location="/Users/pedro/Dropbox/12.senses/sound/wakeup/wakeset_"
 music_extension=".mp3"
 yoga_tutorial_location = "/Users/pedro/Dropbox/5.visuals/3.videos/yoga/"
 yoga_tutorial_file = "a.mp4"
+next_meeting_range_weekends = 3
 
 def play_background():
      subprocess.call(['mplayer', "/Users/pedro/Dropbox/12.senses/sound/QuietInletFood/01Tobiko.mp3"])
@@ -57,17 +58,20 @@ for sentence in morningplan_text:
     	subprocess.call(['say', str(sentence)])
     else:
 	time.sleep(sleep_time)
-
 time.sleep(sleep_start)
 
-#say time
-if (time.localtime().tm_wday < 5):
-    subprocess.call(['say', "Weekday"])
-   #if so, we say we need to be in hpi at <> for <> (get from google)
-else:    
-    subprocess.call(['say', "Weekend"])
-   #else we say our first thing if it is in less than 2h
-
+days = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"]
+months = ["january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december"]
+today=time.localtime().tm_wday
+day=time.localtime().tm_mday
+hour=time.localtime().tm_hour
+month=time.localtime().tm_mon
+subprocess.call(['say', "Today is "+ days[today] + " day " + str(day) + " of " + months[month]])
+#TODO #if so, we say we need to be in hpi at <> for <> (get from google)
+next_meeting_title="meeting students"
+next_meeting_time=23
+if (today < 5 or ( today >= 5 and next_meeting_time < hour + next_meeting_range_weekends)):
+   subprocess.call(['say', "We have " + next_meeting_title + " at " + str(next_meeting_time)])
 time.sleep(sleep_start)
 
 subprocess.call(['say', "Alright, let us start by"])
@@ -82,6 +86,14 @@ for sentence in morningplan_text:
         		break
 
 #say goodbye (can we get next train time?)
-
 listen_thread.join() #kill background process
 sys.exit()
+
+
+####ideas for next versions
+#cardinality = ["first", "second", "third", "forth", "fifth", "sixth", "seventh", "eight", "ninght", "tenth", "eleventh", "twelveth", "thirteenth", "fourtheenth", "fifthteenth", "sixteenth", "seventeenth", "eighteenth", "nineteenth", "th"]
+#day_spoken = str(day) #this is code to get fancier speech output on days, quite irrelevant
+#if (day < 20):
+#	day_spoken = cardinality[day]
+#elif (day >= 20 and day % 10 == 0):
+#	day_spoken = cardinality[19]
