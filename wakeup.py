@@ -20,6 +20,8 @@ yoga_tutorial_file = "a.mp4"
 
 def play_background():
      subprocess.call(['mplayer', "/Users/pedro/Dropbox/12.senses/sound/QuietInletFood/01Tobiko.mp3"])
+     #subprocess.call(['mplayer', "/Users/pedro/Dropbox/12.senses/sound/QuietInletFood/fullAlbum.mp3"])
+
 
 listen_thread = threading.Thread(target=play_background)
 listen_thread.start()
@@ -58,12 +60,12 @@ subprocess.call(['say', "Alright, let us start by"])
 for sentence in morningplan_text:
     if (sentence[0] != '-'):
    	subprocess.call(['say', str(sentence)])
-    if (sentence[0] == 'y' and sentence[1] == 'o' and sentence[2] == 'g' and sentence[3] == 'a'): #seriously, this is what happens when you write code on train without internet
-	subprocess.call([vlc_location+"VLC", "--no-audio", "--video-on-top", "-f", " --play-and-exit", yoga_tutorial_location+yoga_tutorial_file])
-    while True:
-        choice = raw_input("type will when you have done it.")
-        if choice == 'will':
-        	break
+    	if (sentence[0] == 'y' and sentence[1] == 'o' and sentence[2] == 'g' and sentence[3] == 'a'): #seriously, this is what happens when you write code on train without internet
+		subprocess.call([vlc_location+"VLC", "--no-audio", "--video-on-top", "-f", " --play-and-exit", yoga_tutorial_location+yoga_tutorial_file])
+    	while True:
+        	choice = raw_input("type will when you have done it.")
+        	if choice == 'will':
+        		break
 
 
 #load the morning plan, and read it out.
