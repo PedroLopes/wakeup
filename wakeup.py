@@ -20,7 +20,17 @@ yoga_tutorial_file = "a.mp4"
 
 def play_background():
      subprocess.call(['mplayer', "/Users/pedro/Dropbox/12.senses/sound/QuietInletFood/01Tobiko.mp3"])
-     #subprocess.call(['mplayer', "/Users/pedro/Dropbox/12.senses/sound/QuietInletFood/fullAlbum.mp3"])
+     #subprocess.call(['mplayer', "/Users/pedro/Dropbox/12.senses/sound/wakeup/" + str(random.randint(1,10)) + ".mp3"])
+	#cinematic orchestra	1
+	#fennesz		2
+	#fennesz + sakamoto	3
+	#godspeed		4
+	#jagga jazzist		5
+	#kashiwa		6
+	#oren audience 1	7
+	#quiet inlet		8
+	#bad plus		9
+	#reich 18 musicians    10
 
 
 listen_thread = threading.Thread(target=play_background)
