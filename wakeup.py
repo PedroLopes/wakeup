@@ -7,6 +7,7 @@ import subprocess
 import time
 import threading
 
+
 sleep_time = 1
 sleep_start = 10
 texts_dir="texts/"
@@ -14,13 +15,14 @@ wakeup_file="intro_"
 morningplan_file="plan_"
 file_extension=".txt"
 vlc_location="/Applications/VLC.app/Contents/MacOS/"
+music_location="/Users/pedro/Dropbox/12.senses/sound/wakeup/wakeset_"
+music_extension=".mp3"
 yoga_tutorial_location = "/Users/pedro/Dropbox/5.visuals/3.videos/yoga/"
 yoga_tutorial_file = "a.mp4"
 
-
 def play_background():
      subprocess.call(['mplayer', "/Users/pedro/Dropbox/12.senses/sound/QuietInletFood/01Tobiko.mp3"])
-     #subprocess.call(['mplayer', "/Users/pedro/Dropbox/12.senses/sound/wakeup/" + str(random.randint(1,10)) + ".mp3"])
+     #subprocess.call(['mplayer', music_location + str(random.randint(1,10)) + music_extension])
 	#cinematic orchestra	1
 	#fennesz		2
 	#fennesz + sakamoto	3
@@ -59,12 +61,14 @@ for sentence in morningplan_text:
 time.sleep(sleep_start)
 
 #say time
-
-#is it weekday or weekend?
+if (time.localtime().tm_wday < 5):
+    subprocess.call(['say', "Weekday"])
    #if so, we say we need to be in hpi at <> for <> (get from google)
+else:    
+    subprocess.call(['say', "Weekend"])
    #else we say our first thing if it is in less than 2h
 
-#but dont worry about that for now, we must first slowly wake up and take care of us
+time.sleep(sleep_start)
 
 subprocess.call(['say', "Alright, let us start by"])
 for sentence in morningplan_text:
@@ -77,14 +81,7 @@ for sentence in morningplan_text:
         	if choice == 'will':
         		break
 
-
-#load the morning plan, and read it out.
-#play wake up music
-#say go to bath and make tea
-#wait for enter to go to yoga music + play video
-#when done, wait for enter 
-#read out next appoitment again
-
 #say goodbye (can we get next train time?)
 
+listen_thread.join() #kill background process
 sys.exit()
