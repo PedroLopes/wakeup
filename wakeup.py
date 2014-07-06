@@ -20,6 +20,15 @@ yoga_tutorial_location = "/Users/pedro/Dropbox/5.visuals/3.videos/yoga/"
 yoga_tutorial_extension = ".mp4"
 next_meeting_range_weekends = 3
 
+page_token = None
+while True:
+  events = service.events().list(calendarId=calendarID, pageToken=page_token).execute()
+  for event in events['items']:
+    print event['summary']
+  page_token = events.get('nextPageToken')
+  if not page_token:
+    break
+
 def play_background():
      subprocess.call(['mplayer', music_location + str(random.randint(1,10)) + music_extension])
 
@@ -55,6 +64,7 @@ hour=time.localtime().tm_hour
 month=time.localtime().tm_mon
 subprocess.call(['say', "Today is "+ days[today] + " day " + str(day) + " of " + months[month]])
 #TODO #if so, we say we need to be in hpi at <> for <> (get from google)
+
 next_meeting_title="meeting students"
 next_meeting_time=11
 if (today < 5 or ( today >= 5 and next_meeting_time < hour + next_meeting_range_weekends)):
