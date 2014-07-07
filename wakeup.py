@@ -11,7 +11,7 @@ import os
 import datetime
 import time
 import feed.date.rfc3339
-
+import ConfigParser
 from apiclient import discovery
 from oauth2client import file
 from oauth2client import client
@@ -19,22 +19,40 @@ from oauth2client import tools
 from rfc3339 import rfc3339
 from dateutil.parser import parse 
 
+def ConfigSectionMap(section):
+    dict1 = {}
+    options = Config.options(section)
+    for option in options:
+        try:
+            dict1[option] = Config.get(section, option)
+            if dict1[option] == -1:
+                DebugPrint("skip: %s" % option)
+        except:
+            print("exception on %s!" % option)
+            dict1[option] = None
+    return dict1
 
+#time delays to keep things faster/slower
 sleep_time = 1
 sleep_start = 10
-texts_dir="texts/"
+
+#define the prefix that your intro (file that talks o you) or morning plan (file that contains things to do every day) have
 wakeup_file="intro_"
 morningplan_file="plan_"
+
+#file extensions
 file_extension=".txt"
-vlc_location="/Applications/VLC.app/Contents/MacOS/"
-music_location="/Users/pedro/Dropbox/12.senses/sound/wakeup/wakeset_"
 music_extension=".mp3"
-yoga_tutorial_location = "/Users/pedro/Dropbox/5.visuals/3.videos/yoga/"
 yoga_tutorial_extension = ".mp4"
-next_meeting_range_weekends = 3
+
+
+#define where your directory is that has all teh goodies (google calendar ID file, google API access, config.ini file, etc.)
 secure_dir_no_git = "not-git-tracked-secure"
-xrds_dir_no_git = "xrds-data"
+texts_dir=secure_dir_no_git+"/texts/"
+
+#defines for program itself
 newline = '\n'
+next_meeting_range_weekends = 3
 days = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"]
 months = ["january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december"]
 today=time.localtime().tm_wday
@@ -43,6 +61,14 @@ hour=time.localtime().tm_hour
 month=time.localtime().tm_mon
 next_event_summary = None
 next_event_time = None
+
+config_file_name = "/config.ini"
+#get some stuff from the config file, these are securely not kept over the git // configure this for your system (I included a dummy config.ini so you can check it out)
+Config = ConfigParser.ConfigParser()
+Config.read(secure_dir_no_git+config_file_name)
+yoga_tutorial_location = ConfigSectionMap("Audiovisuals")['yoga_tutorial_location']
+vlc_location = ConfigSectionMap("Audiovisuals")['vlc_location']
+music_location = ConfigSectionMap("Audiovisuals")['music_location']
 
 CLIENT_SECRETS = os.path.join(os.path.dirname(__file__), secure_dir_no_git+'/client_secrets.json')
 FLOW = client.flow_from_clientsecrets(CLIENT_SECRETS,
@@ -118,12 +144,6 @@ for sentence in morningplan_text:
 	time.sleep(sleep_time)
 time.sleep(sleep_start)
 
-days = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"]
-months = ["january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december"]
-today=time.localtime().tm_wday
-day=time.localtime().tm_mday
-hour=time.localtime().tm_hour
-month=time.localtime().tm_mon
 subprocess.call(['say', "Today is "+ days[today] + " day " + str(day) + " of " + months[month-1]])
 #TODO #if so, we say we need to be in hpi at <> for <> (get from google)
 
@@ -146,10 +166,3 @@ for sentence in morningplan_text:
 listen_thread.join() #kill background process
 sys.exit()
 
-####ideas for next versions
-#cardinality = ["first", "second", "third", "forth", "fifth", "sixth", "seventh", "eight", "ninght", "tenth", "eleventh", "twelveth", "thirteenth", "fourtheenth", "fifthteenth", "sixteenth", "seventeenth", "eighteenth", "nineteenth", "th"]
-#day_spoken = str(day) #this is code to get fancier speech output on days, quite irrelevant
-#if (day < 20):
-#	day_spoken = cardinality[day]
-#elif (day >= 20 and day % 10 == 0):
-#	day_spoken = cardinality[19]
