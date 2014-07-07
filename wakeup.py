@@ -4,8 +4,18 @@ import re
 import random
 from random import randint
 import subprocess
-import time
 import threading
+import argparse
+import httplib2
+import os
+import datetime
+import time
+
+from apiclient import discovery
+from oauth2client import file
+from oauth2client import client
+from oauth2client import tools
+from rfc3339 import rfc3339
 
 sleep_time = 1
 sleep_start = 10
@@ -19,15 +29,65 @@ music_extension=".mp3"
 yoga_tutorial_location = "/Users/pedro/Dropbox/5.visuals/3.videos/yoga/"
 yoga_tutorial_extension = ".mp4"
 next_meeting_range_weekends = 3
+secure_dir_no_git = "not-git-tracked-secure"
+xrds_dir_no_git = "xrds-data"
+newline = '\n'
+days = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"]
+months = ["january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december"]
+today=time.localtime().tm_wday
+day=time.localtime().tm_mday
+hour=time.localtime().tm_hour
+month=time.localtime().tm_mon
 
-page_token = None
-while True:
-  events = service.events().list(calendarId=calendarID, pageToken=page_token).execute()
-  for event in events['items']:
-    print event['summary']
-  page_token = events.get('nextPageToken')
-  if not page_token:
-    break
+CLIENT_SECRETS = os.path.join(os.path.dirname(__file__), secure_dir_no_git+'/client_secrets.json')
+FLOW = client.flow_from_clientsecrets(CLIENT_SECRETS,
+  scope=[
+      'https://www.googleapis.com/auth/calendar',
+      'https://www.googleapis.com/auth/calendar.readonly',
+    ],
+    message=tools.message_if_missing(CLIENT_SECRETS))
+
+with open(secure_dir_no_git+'/calendar_id.txt') as f:
+    calendarID = f.readlines()
+calendarID = str(calendarID[0]).replace('\n', "")               #ID of the google calendar to write the events to
+
+storage = file.Storage(secure_dir_no_git+'/sample.dat')
+credentials = storage.get()
+if credentials is None or credentials.invalid:
+  credentials = tools.run_flow(FLOW, storage, flags)
+http = httplib2.Http()
+http = credentials.authorize(http)
+service = discovery.build('calendar', 'v3', http=http)
+
+try:
+  print("OK: Probing for google / internet . . . ")
+
+  event_start_date = datetime.date(datetime.datetime.now().year,month,day)
+  start_day_o = event_start_date.toordinal()
+
+  event_start_time = datetime.time(int("03"), int("00"))
+  event_start_date = datetime.date.fromordinal(start_day_o)
+  event_start = datetime.datetime.combine(event_start_date, event_start_time)
+  event_start = rfc3339(event_start)
+  _timeMin = event_start
+  event_start_time = datetime.time(int("23"), int("00"))
+  event_start = datetime.datetime.combine(event_start_date, event_start_time)
+  event_start = rfc3339(event_start)
+  _timeMax = event_start 
+
+  page_token = None
+  while True:
+    events = service.events().list(calendarId=calendarID, pageToken=page_token, timeMax=_timeMax, timeMin=_timeMin, maxResults=3).execute()
+    for event in events['items']:
+      print event['summary']
+    page_token = events.get('nextPageToken')
+    if not page_token:
+      break
+
+
+except client.AccessTokenRefreshError:
+  print ("SORRY: The credentials have been revoked or expired, please re-run"
+    "the application to re-authorize")
 
 def play_background():
      subprocess.call(['mplayer', music_location + str(random.randint(1,10)) + music_extension])
