@@ -10,12 +10,15 @@ import httplib2
 import os
 import datetime
 import time
+import feed.date.rfc3339
 
 from apiclient import discovery
 from oauth2client import file
 from oauth2client import client
 from oauth2client import tools
 from rfc3339 import rfc3339
+from dateutil.parser import parse 
+
 
 sleep_time = 1
 sleep_start = 10
@@ -38,6 +41,8 @@ today=time.localtime().tm_wday
 day=time.localtime().tm_mday
 hour=time.localtime().tm_hour
 month=time.localtime().tm_mon
+next_event_summary = None
+next_event_time = None
 
 CLIENT_SECRETS = os.path.join(os.path.dirname(__file__), secure_dir_no_git+'/client_secrets.json')
 FLOW = client.flow_from_clientsecrets(CLIENT_SECRETS,
@@ -76,18 +81,15 @@ try:
   _timeMax = event_start 
 
   page_token = None
-  while True:
-    events = service.events().list(calendarId=calendarID, pageToken=page_token, timeMax=_timeMax, timeMin=_timeMin, maxResults=3).execute()
-    for event in events['items']:
-      print event['summary']
-    page_token = events.get('nextPageToken')
-    if not page_token:
-      break
-
+  events = service.events().list(calendarId=calendarID, maxResults=int(2), pageToken=page_token, singleEvents=True, orderBy="startTime", timeMax=_timeMax, timeMin=_timeMin).execute()
+  next_event_summary = (events['items'])[0]['summary']
+  next_event_time = (events['items'])[0]['start']
+  timestamp = feed.date.rfc3339.tf_from_timestamp(next_event_time['dateTime'])
+  next_event_time = datetime.datetime.fromtimestamp(timestamp)
 
 except client.AccessTokenRefreshError:
   print ("SORRY: The credentials have been revoked or expired, please re-run"
-    "the application to re-authorize")
+    "the application to re-authorize // could be that we don't have internet access.")
 
 def play_background():
      subprocess.call(['mplayer', music_location + str(random.randint(1,10)) + music_extension])
@@ -122,14 +124,12 @@ today=time.localtime().tm_wday
 day=time.localtime().tm_mday
 hour=time.localtime().tm_hour
 month=time.localtime().tm_mon
-subprocess.call(['say', "Today is "+ days[today] + " day " + str(day) + " of " + months[month]])
+subprocess.call(['say', "Today is "+ days[today] + " day " + str(day) + " of " + months[month-1]])
 #TODO #if so, we say we need to be in hpi at <> for <> (get from google)
 
-next_meeting_title="meeting students"
-next_meeting_time=11
-if (today < 5 or ( today >= 5 and next_meeting_time < hour + next_meeting_range_weekends)):
-   subprocess.call(['say', "We have " + next_meeting_title + " at " + str(next_meeting_time)])
-time.sleep(sleep_start)
+if next_event_summary is not None:
+  subprocess.call(['say', "We have " + next_event_summary + " at " + str(next_event_time.hour)])
+  time.sleep(sleep_start)
 
 subprocess.call(['say', "Alright, let us start by"])
 for sentence in morningplan_text:
