@@ -69,6 +69,7 @@ Config.read(secure_dir_no_git+config_file_name)
 yoga_tutorial_location = ConfigSectionMap("Audiovisuals")['yoga_tutorial_location']
 vlc_location = ConfigSectionMap("Audiovisuals")['vlc_location']
 music_location = ConfigSectionMap("Audiovisuals")['music_location']
+guests_location = ConfigSectionMap("Audiovisuals")['guests_location']
 
 CLIENT_SECRETS = os.path.join(os.path.dirname(__file__), secure_dir_no_git+'/client_secrets.json')
 FLOW = client.flow_from_clientsecrets(CLIENT_SECRETS,
@@ -120,18 +121,27 @@ except client.AccessTokenRefreshError:
 def play_background():
      subprocess.call(['mplayer', music_location + str(random.randint(1,10)) + music_extension])
 
+def play_guests():
+     subprocess.call(['mplayer', guests_location + str(random.randint(1,3)) + music_extension])
+
 listen_thread = threading.Thread(target=play_background)
 listen_thread.start()
 
 time.sleep(sleep_start)
 
-with open(texts_dir+wakeup_file+str(int(random.randint(1,2)))+file_extension) as f:
-    wakeup_text = f.readlines()
+if int(random.randint(0,3)) == 0: #play a sound from our guests
+  guests_thread = threading.Thread(target=play_guests)
+  guests_thread.start()
+  time.sleep(sleep_time*10) #problem, we are hooting a thread but here we want to wait for it to end
+  guests_thread.join() #does this actually wait for this thread to end? 
+else: 
+  with open(texts_dir+wakeup_file+str(int(random.randint(1,2)))+file_extension) as f:
+      wakeup_text = f.readlines()
 
-for sentence in wakeup_text:
-    if (sentence[0] != '-'):
-    	subprocess.call(['say', str(sentence)])
-    else:
+  for sentence in wakeup_text:
+      if (sentence[0] != '-'):
+      	subprocess.call(['say', str(sentence)])
+      else:
 	time.sleep(sleep_time)
 
 with open(texts_dir+morningplan_file+str(int(random.randint(1,2)))+file_extension) as f:
