@@ -19,6 +19,8 @@ from oauth2client import tools
 from rfc3339 import rfc3339
 from dateutil.parser import parse 
 
+#TODO: fix bug with loading full day events
+
 def ConfigSectionMap(section):
     dict1 = {}
     options = Config.options(section)
@@ -129,7 +131,7 @@ listen_thread.start()
 
 time.sleep(sleep_start)
 
-if int(random.randint(0,3)) == 0: #play a sound from our guests
+if int(random.randint(0,1)) == 0: #play a sound from our guests
   guests_thread = threading.Thread(target=play_guests)
   guests_thread.start()
   time.sleep(sleep_time*10) #problem, we are hooting a thread but here we want to wait for it to end
