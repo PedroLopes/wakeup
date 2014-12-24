@@ -128,7 +128,7 @@ def play_background():
      subprocess.call(['mplayer', music_location + str(random.randint(1,10)) + music_extension])
 
 def play_guests():
-     subprocess.call(['mplayer', guests_location + str(random.randint(1,3)) + music_extension])
+     subprocess.call(['mplayer', guests_location + str(random.randint(1,4)) + music_extension])
 
 listen_thread = threading.Thread(target=play_background)
 listen_thread.start()
