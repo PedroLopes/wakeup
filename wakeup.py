@@ -111,11 +111,15 @@ try:
 
   page_token = None
   events = service.events().list(calendarId=calendarID, maxResults=int(2), pageToken=page_token, singleEvents=True, orderBy="startTime", timeMax=_timeMax, timeMin=_timeMin).execute()
-  next_event_summary = (events['items'])[0]['summary']
-  next_event_time = (events['items'])[0]['start']
-  timestamp = feed.date.rfc3339.tf_from_timestamp(next_event_time['dateTime'])
-  next_event_time = datetime.datetime.fromtimestamp(timestamp)
-
+  
+  if (events['items']):
+    next_event_summary = (events['items'])[0]['summary']
+    next_event_time = (events['items'])[0]['start']
+    timestamp = feed.date.rfc3339.tf_from_timestamp(next_event_time['dateTime'])
+    next_event_time = datetime.datetime.fromtimestamp(timestamp)
+  else: 
+    print("No event today, rejoice")
+ 
 except client.AccessTokenRefreshError:
   print ("SORRY: The credentials have been revoked or expired, please re-run"
     "the application to re-authorize // could be that we don't have internet access.")
