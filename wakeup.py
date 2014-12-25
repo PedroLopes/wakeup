@@ -141,7 +141,7 @@ if int(random.randint(0,1)) == 0: #play a sound from our guests
   time.sleep(sleep_time*10) #problem, we are hooting a thread but here we want to wait for it to end
   guests_thread.join() #does this actually wait for this thread to end? 
 else: 
-  with open(texts_dir+wakeup_file+str(int(random.randint(1,2)))+file_extension) as f:
+  with open(texts_dir+wakeup_file+str(int(random.randint(1,3)))+file_extension) as f:
       wakeup_text = f.readlines()
 
   for sentence in wakeup_text:
@@ -150,7 +150,7 @@ else:
       else:
 	time.sleep(sleep_time)
 
-with open(texts_dir+morningplan_file+str(int(random.randint(1,2)))+file_extension) as f:
+with open(texts_dir+morningplan_file+str(int(random.randint(1,3)))+file_extension) as f:
     morningplan_text = f.readlines()
 
 for sentence in morningplan_text:
