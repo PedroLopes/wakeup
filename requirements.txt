@@ -1,0 +1,4 @@
+PyFeed==0.7.4
+argparse==1.2.1
+python-dateutil==2.4.2
+rfc3339==5
