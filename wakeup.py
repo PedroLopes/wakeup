@@ -69,6 +69,7 @@ Config.read(secure_dir_no_git+config_file_name)
 yoga_tutorial_location = ConfigSectionMap("Audiovisuals")['yoga_tutorial_location']
 vlc_location = ConfigSectionMap("Audiovisuals")['vlc_location']
 music_location = ConfigSectionMap("Audiovisuals")['music_location']
+tts_engine_cmd = ConfigSectionMap("TextToSpeech")['tts_engine_cmd']
 
 CLIENT_SECRETS = os.path.join(os.path.dirname(__file__), secure_dir_no_git+'/client_secrets.json')
 FLOW = client.flow_from_clientsecrets(CLIENT_SECRETS,
@@ -130,7 +131,7 @@ with open(texts_dir+wakeup_file+str(int(random.randint(1,2)))+file_extension) as
 
 for sentence in wakeup_text:
     if (sentence[0] != '-'):
-    	subprocess.call(['say', str(sentence)])
+    	subprocess.call([tts_engine_cmd, str(sentence)])
     else:
 	time.sleep(sleep_time)
 
@@ -139,24 +140,23 @@ with open(texts_dir+morningplan_file+str(int(random.randint(1,2)))+file_extensio
 
 for sentence in morningplan_text:
     if (sentence[0] != '-'):
-    	subprocess.call(['say', str(sentence)])
+    	subprocess.call([tts_engine_cmd, str(sentence)])
     else:
 	time.sleep(sleep_time)
 time.sleep(sleep_start)
 
-subprocess.call(['say', "Today is "+ days[today] + " day " + str(day) + " of " + months[month-1]])
-#TODO #if so, we say we need to be in hpi at <> for <> (get from google)
+subprocess.call([tts_engine_cmd, "Today is "+ days[today] + " day " + str(day) + " of " + months[month-1]])
 
 if next_event_summary is not None:
-  subprocess.call(['say', "We have " + next_event_summary + " at " + str(next_event_time.hour)])
+  subprocess.call([tts_engine_cmd, "We have " + next_event_summary + " at " + str(next_event_time.hour)])
   time.sleep(sleep_start)
 
-subprocess.call(['say', "Alright, let us start by"])
+subprocess.call([tts_engine_cmd, "Alright, let us start by"])
 for sentence in morningplan_text:
     if (sentence[0] != '-'):
-   	subprocess.call(['say', str(sentence)])
-    	if (sentence[0] == 'y' and sentence[1] == 'o' and sentence[2] == 'g' and sentence[3] == 'a'): #seriously, this is what happens when you write code on train without internet
-		subprocess.call([vlc_location+"VLC", "--no-audio", "--video-on-top", "-f", " --play-and-exit", yoga_tutorial_location+str(random.randint(1,3))+yoga_tutorial_extension])
+   	subprocess.call([tts_engine_cmd, str(sentence)])
+    	#if (sentence[0] == 'y' and sentence[1] == 'o' and sentence[2] == 'g' and sentence[3] == 'a'): #seriously, this is what happens when you write code on train without internet
+		#subprocess.call([vlc_location+"VLC", "--no-audio", "--video-on-top", "-f", " --play-and-exit", yoga_tutorial_location+str(random.randint(1,3))+yoga_tutorial_extension])
     	while True:
         	choice = raw_input("type will when you have done it.")
         	if choice == 'will':
