@@ -15,6 +15,3 @@ This is python code. You need **python**.
 simply: ``./install_deps.sh`` (install one dependency to which I could not find a pip install)
 then: pip install -r requirements.txt
 You should now have everything to run this.  
-
-## testing it
-``python wakeup.py``
