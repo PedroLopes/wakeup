@@ -12,3 +12,8 @@ This is python code. You need **python**.
 simply: ``./install_deps.sh`` (install one dependency to which I could not find a pip install)
 then: pip install -r requirements.txt
 You should now have everything to run this.  
+
+## but how does this wake me up at XX:XX?
+I suggest you use the powers of **cronjobs**. 
+Run ``crontab -e`` and add this like:
+``00 07 * * * /usr/bin/python path-to-wakeup-repo/wakeup.py`` (this means, wake up at 7am, every day)
