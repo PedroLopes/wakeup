@@ -18,6 +18,12 @@ from oauth2client import client
 from oauth2client import tools
 from rfc3339 import rfc3339
 from dateutil.parser import parse 
+import argparse
+from oauth2client import tools
+
+# parser adds flags (not needed to be invoked with them) which the auth2.0 tool requires for boot
+parser = argparse.ArgumentParser(parents=[tools.argparser])
+flags = parser.parse_args()
 
 #TODO: fix bug with loading full day events
 
