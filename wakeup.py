@@ -19,6 +19,9 @@ from oauth2client import tools
 from rfc3339 import rfc3339
 from dateutil.parser import parse 
 
+parser = argparse.ArgumentParser(parents=[tools.argparser])
+flags = parser.parse_args()
+
 def ConfigSectionMap(section):
     dict1 = {}
     options = Config.options(section)
