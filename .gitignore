@@ -1,3 +1,6 @@
+# my personal files
+not-git-tracked-secure/*
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
